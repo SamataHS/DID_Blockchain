@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DID Identity System</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────────── -->
+<header>
+  <div>
+    <div class="logo">DID Identity System</div>
+    <div class="subtitle">Decentralized Identity on Blockchain &mdash; College Project</div>
+  </div>
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-val" id="stat-identities">0</div>
+      <div class="stat-label">Identities</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="stat-blocks">0</div>
+      <div class="stat-label">Blocks</div>
+    </div>
+  </div>
+</header>
+
+<!-- ── TABS ────────────────────────────────────────────────── -->
+<div class="tabs">
+  <button class="tab active" onclick="showTab('register', this)">Register Identity</button>
+  <button class="tab"        onclick="showTab('login',    this)">Login</button>
+  <button class="tab"        onclick="showTab('resolve',  this)">Resolve DID</button>
+  <button class="tab"        onclick="showTab('all',      this)">All Identities</button>
+  <button class="tab"        onclick="showTab('how',      this)">How It Works</button>
+</div>
+
+<div class="container">
+
+  <!-- ── REGISTER ─────────────────────────────────────────── -->
+  <div id="tab-register" class="panel active">
+    <div class="card">
+      <h2>Create Your Decentralized Identity</h2>
+      <p class="desc">
+        Enter your name and click Generate. The system will create a unique DID and
+        a cryptographic key pair for you. No email, no password — just keys.
+      </p>
+      <label>Your Full Name</label>
+      <input type="text" id="reg-name" placeholder="e.g. Arjun Sharma" />
+      <button onclick="registerDID()">Generate My DID</button>
+      <div id="reg-result" class="result"></div>
+    </div>
+  </div>
+
+  <!-- ── LOGIN ────────────────────────────────────────────── -->
+  <div id="tab-login" class="panel">
+    <div class="card">
+      <h2>Passwordless Login</h2>
+      <p class="desc">
+        Prove your identity using your private key. A random challenge is signed with
+        your key and verified against the public key on the ledger. No password is
+        ever sent or stored.
+      </p>
+      <label>Your DID</label>
+      <input type="text" id="login-did" placeholder="did:local:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"/>
+      <label>Your Private Key</label>
+      <textarea id="login-key" placeholder="-----BEGIN PRIVATE KEY-----
+MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg...
+-----END PRIVATE KEY-----"></textarea>
+      <button onclick="loginDID()">Authenticate with Signature</button>
+      <div id="login-result" class="result"></div>
+    </div>
+  </div>
+
+  <!-- ── RESOLVE ──────────────────────────────────────────── -->
+  <div id="tab-resolve" class="panel">
+    <div class="card">
+      <h2>Resolve a DID Document</h2>
+      <p class="desc">
+        Look up any registered DID on the ledger and view its full DID Document —
+        just like how anyone can verify a transaction on a public blockchain.
+      </p>
+      <label>DID to Resolve</label>
+      <input type="text" id="resolve-did" placeholder="did:local:xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"/>
+      <button onclick="resolveDID()">Lookup on Ledger</button>
+      <div id="resolve-result" class="result"></div>
+    </div>
+  </div>
+
+  <!-- ── ALL IDENTITIES ───────────────────────────────────── -->
+  <div id="tab-all" class="panel">
+    <div class="card">
+      <h2>All Registered Identities</h2>
+      <p class="desc">Every DID document registered on the local blockchain ledger.</p>
+      <button onclick="loadAll()">Refresh List</button>
+      <div id="all-list"></div>
+    </div>
+  </div>
+
+  <!-- ── HOW IT WORKS ─────────────────────────────────────── -->
+  <div id="tab-how" class="panel">
+
+    <div class="how-card">
+      <h3>Key Concepts</h3>
+      <div class="concept-grid">
+        <div class="concept-box">
+          <div class="concept-title">DID (Decentralized Identifier)</div>
+          <div class="concept-desc">A globally unique ID you create yourself. Format: <code>did:local:uuid</code>. No company or government issues it.</div>
+        </div>
+        <div class="concept-box">
+          <div class="concept-title">DID Document</div>
+          <div class="concept-desc">A JSON record stored on the ledger containing your public key, name, and creation timestamp.</div>
+        </div>
+        <div class="concept-box">
+          <div class="concept-title">Public Key</div>
+          <div class="concept-desc">Stored on the ledger. Anyone can use it to verify a message came from you. Safe to share.</div>
+        </div>
+        <div class="concept-box">
+          <div class="concept-title">Private Key</div>
+          <div class="concept-desc">Kept only by YOU. Never stored on server. Used to prove identity by signing a challenge.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="how-card">
+      <h3>Registration Flow</h3>
+      <div class="step"><div class="step-num">1</div><div class="step-text"><strong>You enter your name</strong><span>The server receives your name as the only input needed.</span></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Key pair is generated</strong><span>Node.js crypto module generates a public + private key using Elliptic Curve P-256 algorithm.</span></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text"><strong>DID is created</strong><span>A unique ID is generated: <code>did:local:&lt;uuid&gt;</code>. The DID Document (with your public key) is saved to the ledger.</span></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Private key returned once</strong><span>Your private key is shown to you ONCE and never stored anywhere. You must save it yourself.</span></div></div>
+    </div>
+
+    <div class="how-card">
+      <h3>Authentication Flow (Passwordless Login)</h3>
+      <div class="step"><div class="step-num">1</div><div class="step-text"><strong>You send your DID + private key</strong><span>The server receives your DID to look up your public key on the ledger.</span></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Server creates a challenge</strong><span>A random unique string is generated, e.g. <code>did-auth-challenge::did:local:xxx::1710000000</code>. This prevents replay attacks.</span></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Challenge is signed</strong><span>Your private key signs the challenge using SHA-256 + ECDSA. Result is a base64 signature string.</span></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Signature is verified</strong><span>The server uses your public key (from ledger) to verify the signature. If it matches → you are authenticated!</span></div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-text"><strong>No password ever used</strong><span>The private key is only used locally for signing. It is never stored, logged, or transmitted in a way that exposes it.</span></div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── SCRIPT ──────────────────────────────────────────────── -->
+<script>
+
+// ── Tabs ──────────────────────────────────────────────────────
+function showTab(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'all') loadAll();
+  if (name === 'register' || name === 'all') loadStats();
+}
+
+// ── Stats ─────────────────────────────────────────────────────
+async function loadStats() {
+  try {
+    const r = await fetch('/api/stats');
+    const d = await r.json();
+    document.getElementById('stat-identities').textContent = d.totalIdentities;
+    document.getElementById('stat-blocks').textContent     = d.totalBlocks;
+  } catch {}
+}
+
+// ── Show result helper ─────────────────────────────────────────
+function showResult(id, type, html) {
+  const el = document.getElementById(id);
+  el.className = 'result ' + type;
+  el.style.display = 'block';
+  el.innerHTML = html;
+}
+
+function loading(id) {
+  showResult(id, 'info', '<span class="loading"></span> Processing...');
+}
+
+// ── Register ───────────────────────────────────────────────────
+async function registerDID() {
+  const name = document.getElementById('reg-name').value.trim();
+  if (!name) return showResult('reg-result', 'error', 'Please enter your name.');
+
+  loading('reg-result');
+
+  const res  = await fetch('/api/register', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name })
+  });
+  const data = await res.json();
+
+  if (data.error) {
+    showResult('reg-result', 'error', `<span class="badge error">Failed</span><br>${data.error}`);
+  } else {
+    const escapedKey = data.privateKey.replace(/`/g, '\\`');
+    showResult('reg-result', 'success', `
+      <span class="badge success">Identity Created Successfully</span>
+
+      <div style="margin-top:0.5rem">
+        <strong style="font-size:0.8rem;color:#888">YOUR DID (share this freely)</strong>
+        <div class="did-box">${data.did}</div>
+        <button class="btn-sm" onclick="copy('${data.did}', this)">Copy DID</button>
+      </div>
+
+      <div style="margin-top:1rem">
+        <strong style="font-size:0.8rem;color:#888">YOUR PRIVATE KEY (keep this secret!)</strong>
+        <div class="key-box">${data.privateKey.replace(/\n/g,'<br>')}</div>
+        <button class="btn-sm" onclick="copyKey(\`${escapedKey}\`, this)">Copy Private Key</button>
+      </div>
+
+      <div class="warning-box">
+        IMPORTANT &mdash; Save your private key RIGHT NOW.<br>
+        It will NOT be shown again. You need it every time you log in.<br>
+        Losing it = losing your identity permanently. There is no recovery.
+      </div>
+    `);
+    loadStats();
+  }
+}
+
+// ── Login ──────────────────────────────────────────────────────
+async function loginDID() {
+  const did        = document.getElementById('login-did').value.trim();
+  const privateKey = document.getElementById('login-key').value.trim();
+  if (!did || !privateKey) {
+    return showResult('login-result', 'error', 'Both DID and private key are required.');
+  }
+
+  loading('login-result');
+
+  const res  = await fetch('/api/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ did, privateKey })
+  });
+  const data = await res.json();
+
+  if (data.success) {
+    showResult('login-result', 'success', `
+      <span class="badge success">Authenticated</span>
+      <strong style="font-size:1rem">${data.message}</strong>
+      <div style="margin-top:0.8rem;display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;font-size:0.78rem">
+        <div><span style="color:#555">DID</span><br><span style="color:#9a8fff;font-family:monospace;font-size:0.68rem;word-break:break-all">${data.did}</span></div>
+        <div><span style="color:#555">Block #</span><br><span style="color:#4cde8c">${data.blockNumber}</span></div>
+        <div><span style="color:#555">Registered</span><br>${new Date(data.created).toLocaleDateString()}</div>
+      </div>
+      <div style="margin-top:1rem;font-size:0.78rem;color:#4a7a4a;border-top:1px solid #1a3a1a;padding-top:0.8rem">
+        Identity verified using cryptographic signature &mdash; no password was used or stored.
+      </div>
+    `);
+  } else {
+    showResult('login-result', 'error', `
+      <span class="badge error">Authentication Failed</span><br>
+      ${data.message}
+    `);
+  }
+}
+
+// ── Resolve ────────────────────────────────────────────────────
+async function resolveDID() {
+  const did = document.getElementById('resolve-did').value.trim();
+  if (!did) return showResult('resolve-result', 'error', 'Please enter a DID.');
+
+  loading('resolve-result');
+
+  const res  = await fetch('/api/resolve/' + encodeURIComponent(did));
+  const data = await res.json();
+
+  if (data.error) {
+    showResult('resolve-result', 'error', `<span class="badge error">Not Found</span><br>${data.error}`);
+  } else {
+    showResult('resolve-result', 'info', `
+      <span class="badge" style="background:#0d1a2a;color:#78b4f0;border:1px solid #1a3560">DID Document Found — Block #${data.blockNumber}</span>
+      <pre>${JSON.stringify(data, null, 2)}</pre>
+    `);
+  }
+}
+
+// ── All Identities ─────────────────────────────────────────────
+async function loadAll() {
+  const res  = await fetch('/api/identities');
+  const list = await res.json();
+  const el   = document.getElementById('all-list');
+
+  if (list.length === 0) {
+    el.innerHTML = '<p style="color:#444;font-size:0.83rem;margin-top:1rem">No identities registered yet. Go to Register tab to create one.</p>';
+    return;
+  }
+
+  el.innerHTML = '<div class="identity-list">' +
+    list.map(i => `
+      <div class="identity-item">
+        <div class="block-num">#${i.blockNumber}</div>
+        <div class="identity-info">
+          <div class="name">${i.name}</div>
+          <div class="did-label">${i.id}</div>
+          <div class="date">${new Date(i.created).toLocaleString()}</div>
+        </div>
+      </div>
+    `).join('') +
+  '</div>';
+}
+
+// ── Copy helpers ───────────────────────────────────────────────
+function copy(text, btn) {
+  navigator.clipboard.writeText(text);
+  const orig = btn.textContent;
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = orig, 1500);
+}
+
+function copyKey(key, btn) {
+  navigator.clipboard.writeText(key);
+  const orig = btn.textContent;
+  btn.textContent = 'Copied! Save it now.';
+  setTimeout(() => btn.textContent = orig, 2000);
+}
+
+// ── Init ───────────────────────────────────────────────────────
+loadStats();
+
+</script>
+</body>
+</html>

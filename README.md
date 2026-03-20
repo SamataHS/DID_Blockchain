@@ -1,5 +1,5 @@
 # Decentralized Identity Management System
-### Blockchain-Based DID Project | College Submission
+### Blockchain-Based DID Project 
 
 ---
 
@@ -138,7 +138,7 @@ node index.js
 ```json
 POST /api/register
 {
-  "name": "Arjun Sharma"
+  "name": "Samata"
 }
 ```
 **Response:**
@@ -147,7 +147,7 @@ POST /api/register
   "did": "did:local:550e8400-e29b-41d4-a716-446655440000",
   "didDocument": {
     "id": "did:local:550e8400-...",
-    "name": "Arjun Sharma",
+    "name": "Samata",
     "publicKey": "-----BEGIN PUBLIC KEY-----\n...",
     "created": "2024-03-20T10:00:00.000Z"
   },
@@ -168,7 +168,7 @@ POST /api/login
 ```json
 {
   "success": true,
-  "message": "Welcome back, Arjun Sharma!"
+  "message": "Welcome back, Samata!"
 }
 ```
 
@@ -264,4 +264,4 @@ In production systems, the `ledger.json` file would be replaced by an actual blo
 
 ---
 
-*Project developed as part of Blockchain Technology coursework.*
+

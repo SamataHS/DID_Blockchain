@@ -23,7 +23,7 @@ stages {
     stage('OWASP Dependency Check') {
     steps {
         dependencyCheck(
-            odcInstallation: 'OWASP-DC',
+            odcInstallation: 'OWASP-DC-NEW',
             additionalArguments: '--scan .'
         )
     }

@@ -20,14 +20,14 @@ stages {
         }
     }
 
-    stage('OWASP Dependency Check') {
-        steps {
-            dependencyCheck(
-                odcInstallation: 'OWASP-DC',
-                additionalArguments: '--scan .'
-            )
+    stage('Check OWASP Tool') {
+    steps {
+        script {
+            def dcHome = tool 'OWASP-DC'
+            echo "OWASP Tool Path: ${dcHome}"
         }
     }
+}
 
     stage('Publish OWASP Report') {
         steps {

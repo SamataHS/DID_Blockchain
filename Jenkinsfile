@@ -22,10 +22,13 @@ stages {
 
     stage('OWASP Dependency Check') {
     steps {
-        dependencyCheck(
-            odcInstallation: 'OWASP-DC-NEW',
-            additionalArguments: '--scan .'
-        )
+        bat '''
+        "C:\\Users\\acer\\Downloads\\dependency-check-12.2.2-release\\dependency-check\\bin\\dependency-check.bat" ^
+        --project "DID-Blockchain" ^
+        --scan . ^
+        --format XML ^
+        --out .
+        '''
     }
 }
 

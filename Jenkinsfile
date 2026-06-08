@@ -1,7 +1,7 @@
 pipeline {
 agent any
 
-```
+
 environment {
     IMAGE_NAME = "samatahs/did-blockchain"
 }
@@ -94,6 +94,6 @@ post {
         echo 'Pipeline failed'
     }
 }
-```
+
 
 }

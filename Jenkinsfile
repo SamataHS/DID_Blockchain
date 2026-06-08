@@ -19,17 +19,17 @@ pipeline {
             }
         }
 
-        stage('OWASP Dependency Check') {
-            steps {
-                bat '''
-                "C:\\Tools\\dependency-check\\bin\\dependency-check.bat" ^
-                --project "DID-Blockchain" ^
-                --scan . ^
-                --format ALL ^
-                --out .
-                '''
-            }
-        }
+       stage('OWASP Dependency Check') {
+    steps {
+        bat '''
+        "C:\\tools\\dependency-check-12.2.2-release\\dependency-check\\bin\\dependency-check.bat" ^
+        --project "DID-Blockchain" ^
+        --scan . ^
+        --format ALL ^
+        --out .
+        '''
+    }
+}
 
         stage('Publish OWASP Report') {
             steps {
